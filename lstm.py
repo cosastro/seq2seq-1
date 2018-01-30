@@ -15,12 +15,7 @@ Classifier = rnn.Classifier
 
 
 class LSTM(Chain):
-    def __init__(
-            self,
-            embed_dim: int,
-            n_units: int=1000,
-            gpu: int=-1,
-    ):
+    def __init__( self, embed_dim: int, n_units: int=1000, gpu: int=-1, ):
         super(LSTM, self).__init__(
             embed=L.EmbedID(embed_dim, n_units),  # word embedding
             l1=L.Linear(n_units, n_units * 4),
@@ -39,13 +34,7 @@ class LSTM(Chain):
     def reset_state(self):
         self.l1.reset_state()
 
-    def forward_one(
-            self,
-            word: Variable,
-            state: State,
-            dropout: bool=False,
-            train: bool=False
-    ) -> Tuple[Variable, State]:
+    def forward_one( self, word: Variable, state: State, dropout: bool=False, train: bool=False ) -> Tuple[Variable, State]:
         y0 = self.embed(word)
         if dropout:
             h1_in = self.l1(F.dropout(y0, train=train)) + self.h1(state["h1"])
@@ -66,13 +55,7 @@ class LSTM(Chain):
         }
         return h3, new_state
 
-    def forward(
-            self,
-            words: List[Variable],
-            state: State,
-            dropout: bool=False,
-            train: bool=False
-    ) -> Tuple[List[Variable], State]:
+    def forward( self, words: List[Variable], state: State, dropout: bool=False, train: bool=False ) -> Tuple[List[Variable], State]:
 
         # state は 0 で初期化する
         state = state if state else {
@@ -85,19 +68,9 @@ class LSTM(Chain):
 
         ys = []
         for word in words:
-            y, state = self.forward_one(
-                word, state, dropout=dropout, train=train
-            )
+            y, state = self.forward_one( word, state, dropout=dropout, train=train )
             ys.append(y)
         return ys, state
 
-    def __call__(
-            self,
-            words: List[Variable],
-            state: State,
-            dropout: bool=False,
-            train: bool=False
-    ):
-        return self.forward(
-            words, state, dropout=dropout, train=train
-        )
+    def __call__( self, words: List[Variable], state: State, dropout: bool=False, train: bool=False ):
+        return self.forward( words, state, dropout=dropout, train=train )

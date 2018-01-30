@@ -20,12 +20,9 @@ if __name__ == "__main__":
 
     # GPU config
     parser = argparse.ArgumentParser()
-    parser.add_argument('config_file', metavar='config_file', type=str,
-                        help='config file')
-    parser.add_argument('--gpu', '-g', default=-1, type=int,
-                        help='GPU ID (negative value indicates CPU)')
-    parser.add_argument('--type', '-t', default="relu", type=str,
-                        help='GPU ID (negative value indicates CPU)')
+    parser.add_argument('config_file', metavar='config_file', type=str, help='config file')
+    parser.add_argument('--gpu', '-g', default=-1, type=int, help='GPU ID (negative value indicates CPU)')
+    parser.add_argument('--type', '-t', default="relu", type=str, help='GPU ID (negative value indicates CPU)')
     args = parser.parse_args()
     gpu_flag = args.gpu if args.gpu >= 0 else -1
 
@@ -68,10 +65,7 @@ if __name__ == "__main__":
         dictionary = load_dictionary(dict_file)
     else:
         from util import create_dictionary
-        dictionary = create_dictionary(
-            [sent_file],
-            min_freq=min_freq
-        )
+        dictionary = create_dictionary([sent_file], min_freq=min_freq )
         dictionary.save(dict_file)
 
     # Prepare encoder RNN model
@@ -79,20 +73,12 @@ if __name__ == "__main__":
     model_type = args.type
     if model_type == "relu":
         model = relu_rnn.Classifier(
-            relu_rnn.ReLURNN(
-                embed_dim=dim,
-                n_units=n_units,
-                gpu=args.gpu
-            )
+            relu_rnn.ReLURNN( embed_dim=dim, n_units=n_units, gpu=args.gpu )
         )
     elif model_type == "lstm":
         import lstm
         model = lstm.Classifier(
-            lstm.LSTM(
-                embed_dim=dim,
-                n_units=n_units,
-                gpu=args.gpu
-            )
+            lstm.LSTM( embed_dim=dim, n_units=n_units, gpu=args.gpu )
         )
     else:
         raise Exception("model argment should be relu or lstm")
@@ -115,13 +101,7 @@ if __name__ == "__main__":
             word2vec_model = word2vec.Word2Vec.load(word2vec_model_file)
         else:
             print("start learning word2vec model")
-            word2vec_model = word2vec.Word2Vec(
-                load_sentence(sent_file),
-                size=n_units,
-                window=5,
-                min_count=1,
-                workers=4
-            )
+            word2vec_model = word2vec.Word2Vec( load_sentence(sent_file), size=n_units, window=5, min_count=1, workers=4 )
             print("save word2vec model")
             word2vec_model.save(word2vec_model_file)
 
